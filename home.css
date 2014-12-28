@@ -1,0 +1,104 @@
+/* Space out content a bit */
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background: url(Backgrounds/Barra.jpg) no-repeat center center fixed; 
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+}
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+.header,
+.marketing,
+.footer {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Custom page header */
+.header {
+  border-bottom: 1px solid #FFFFFF;
+}
+/* Make the masthead heading the same height as the navigation */
+.header h3 {
+  padding-bottom: 19px;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 40px;
+  color: #FFFFFF;
+}
+
+/* Custom page footer */
+.footer {
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #FFFFFF;
+}
+
+/* Customize container */
+@media (min-width: 768px) {
+  .container {
+    max-width: 1000px;
+  }
+}
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+.nav a {
+  background-color: #F5F5F5;
+  opacity: 0.7;
+  color: #000000; 
+}
+
+/* Main marketing message and sign up button */
+.jumbotron {
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #F5F5F5;
+  opacity: 0.9;
+}
+.jumbotron .btn {
+  padding: 14px 24px;
+  font-size: 21px;
+  background-color: #008080;
+  border-radius: 1px;
+  opacity: 1;
+}
+
+/* Supporting marketing content */
+.marketing {
+  margin: 40px 0;
+  background-color: #F5F5F5;
+  opacity: 0.7;
+  border-radius: 1px;
+}
+.marketing p + h4 {
+  margin-top: 28px;
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+  /* Remove the padding we set earlier */
+  .header,
+  .marketing,
+  .footer {
+    padding-right: 0;
+    padding-left: 0;
+    color: #000000;
+  }
+
+  .footer {
+    color: #e5e5e5;
+  }
+  /* Space out the masthead */
+  .header {
+    margin-bottom: 30px;
+  }
+  /* Remove the bottom border on the jumbotron for visual effect */
+  .jumbotron {
+    border-bottom: 0;
+  }
+}
