@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Little Blue Sparkle</title>
+    <meta charset="utf-8">
+    <meta property="og:image" content="placeholder.png">
+    <script src="js/d3.v3.js"></script>
+    <script src="js/colorbrewer.js"></script>
+    <script src="js/topojson.js"></script>
+    <script src="js/cartogram.js"></script>
+    <style type="text/css">
+
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+        font-size: 14px;
+        line-height: 1.4em;
+        padding: 0;
+        margin: 0;
+      }
+
+      #container {
+        width: 1000px;
+        margin: 20px auto;
+      }
+
+      h1 {
+        font-size: 200%;
+        margin: 0 0 15px 0;
+      }
+
+      h2 {
+        font-size: 160%;
+        margin: 0 0 10px 0;
+      }
+
+      p {
+        margin: 0 0 10px;
+      }
+
+      form, form > * {
+        margin: 0;
+      }
+
+      #status {
+        color: #999;
+      }
+
+      #map-container {
+        height: 550px;
+        text-align: center;
+        position: relative;
+        margin: 20px 0;
+      }
+
+      #map {
+        display: block;
+        position: absolute;
+        background: #fff;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      path.state {
+        stroke: #666;
+        stroke-width: .5;
+      }
+
+      path.state:hover {
+        stroke: #000;
+      }
+
+      form {
+        font-size: 120%;
+      }
+
+      select {
+        font-size: inherit;
+      }
+
+      #placeholder {
+        position: absolute;
+        z-index: -1;
+        display: block;
+        left: 0;
+        top: 0;
+      }
+
+    </style>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="cartogram.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+  </head>
+
+  <body>
+
+    
+      <div class="inner">
+              <h3 class="masthead-brand">Little Blue Sparkle</h3>
+              <nav>
+                <ul class="nav masthead-nav">
+                  <li class="active"><a href="index.html">Home</a></li>
+                  <li><a href="explorer.html">Explorer</a></li>
+                </ul>
+              </nav>
+            </div>
+
+    <div class="container">
+
+      <div class="jumbotron">
+      <h1>Worldwide Cartogram</h1>
+      <p>This map can be contorted to change the shape and size of each country depending on the proportion it takes of a given variable for a particular year.</p> 
+        <form>
+        <p>
+          <label>Scale by <select id="field"></select></label>
+          <label>in <select id="year"></select></label>
+          <span id="status"></span><br>
+        </p>
+      </form>
+      <div id="map-container">
+        <img id="placeholder" alt="placeholder image for old browsers" src="placeholder.png">
+        <svg id="map"></svg>
+      </div>
+      <p>This cartogram applies code from <a href="http://th-mayer.de/cartogram/">Thomas Mayer</a> and 
+        <a href="http://prag.ma/code/d3-cartogram/" target="_blank">Shawn Allen</a>, author of 
+        <a href="https://github.com/shawnbot/d3-cartogram/" target="_blank">cartogram.js</a>, a d3 implementation of an <a href="http://onlinelibrary.wiley.com/doi/10.1111/j.0033-0124.1985.00075.x/abstract" target="_blank">algorithm</a> to construct continuous area cartograms. It also uses <a href="http://github.com/mbostock/topojson" target="_blank">topojson</a>, 
+        <a href="http://www.geonames.org" target="_blank">geonames</a>, <a href="http://d3js.org">d3</a>, <a href="http://naturalearthdata.com">natural earth</a>, <a href="http://colorbrewer2.org" target="_blank">colorbrewer</a> and UN Data.</p>    
+    </div>
+
+    <div class="footer">
+      <p><a href="http://github.com/thetomscott/LittleBlueSparkle"</a>GitHub</p>
+    </div>       
+
+
+    <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script>
+      if (!document.createElementNS) {
+        document.getElementsByTagName("form")[0].style.display = "none";
+      }
+
+      var percent = (function() {
+            var fmt = d3.format('{: }');
+            return function(n) { return fmt(n) + "%"; };
+          })(),
+          fields = [
+            {name: "None", id: "none"},
+            {name: "Population (thousands)", id: "pop", key: "POPULATION%d", unit: " thousand", years: [1950, 1960, 1970, 1980, 1990, 2000, 2010]},
+            {name: "GDP ($m)", id: "gdp", key: "GDP%d", unit: " $m", years: [1970, 1980, 1990, 2000, 2010, 2013]},
+          ],
+          years = [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2013],  
+          fieldsById = d3.nest()
+            .key(function(d) { return d.id; })
+            .rollup(function(d) { return d[0]; })
+            .map(fields),
+          field = fields[0],
+          year = years[0],
+          colors = colorbrewer.Oranges[4]
+            .map(function(rgb) { return d3.hsl(rgb); });
+
+      var body = d3.select("body"),
+          stat = d3.select("#status");
+
+      var fieldSelect = d3.select("#field")
+        .on("change", function(e) {
+          field = fields[this.selectedIndex];
+          location.hash = "#" + [field.id, year].join("/");
+        });
+        
+      fieldSelect.selectAll("option")
+        .data(fields)
+        .enter()
+        .append("option")
+          .attr("value", function(d) { return d.id; })
+          .text(function(d) { return d.name; });
+
+      var yearSelect = d3.select("#year")
+        .on("change", function(e) {
+          year = years[this.selectedIndex];
+          location.hash = "#" + [field.id, year].join("/");
+        });
+
+      yearSelect.selectAll("option")
+        .data(years)
+        .enter()
+        .append("option")
+          .attr("value", function(y) { return y; })
+          .text(function(y) { return y; })
+
+      var map = d3.select("#map"),
+          zoom = d3.behavior.zoom()
+            .translate([-260,-25])
+            .scale(1.4)
+            .scaleExtent([0.5, 10.0])
+            .on("zoom", updateZoom),
+          layer = map.append("g")
+            .attr("id", "layer"),
+          worldcountries = layer.append("g")
+            .attr("id", "worldcountries")
+            .selectAll("path");
+
+      // map.call(zoom);
+      updateZoom();
+
+      function updateZoom() {
+        var scale = zoom.scale();
+        layer.attr("transform",
+          "translate(" + zoom.translate() + ") " +
+          "scale(" + [scale, scale] + ")");
+      }
+
+      var proj = d3.geo.mercator(),
+          topology,
+          geometries,
+          rawData,
+          dataById = {},
+          carto = d3.cartogram()
+            .projection(proj)
+            .properties(function(d) {
+              return dataById[d.id];
+            })
+            .value(function(d) {
+              return +d.properties[field];
+            });
+
+      window.onhashchange = function() {
+        parseHash();
+      };
+
+      var url = ["data/worldcountries.topojson"];
+      d3.json(url, function(topo) {
+        topology = topo;
+        geometries = topology.objects.worldcountries.geometries;      
+        d3.csv("data/information.csv", function(data) {
+          rawData = data;
+          dataById = d3.nest()
+            .key(function(d) { return d.NAME; })
+            .rollup(function(d) { return d[0]; })
+            .map(data);
+          init();
+        });
+      });
+
+      function init() {
+        var features = carto.features(topology, geometries),
+            path = d3.geo.path()
+              .projection(proj);
+
+        worldcountries = worldcountries.data(features)
+          .enter()
+          .append("path")
+            .attr("class", "state")
+            .attr("id", function(d) {
+              try {
+                return d.properties.NAME;
+              }catch(e) {return "UNKNOWN";}
+            })
+            .attr("fill", "#fafafa")
+            .attr("d", path)
+            .attr("cursor","pointer");
+        worldcountries.append("title");
+        
+        parseHash();
+      }
+
+      function reset() {
+        stat.text("");
+        body.classed("updating", false);
+        
+        var features = carto.features(topology, geometries),
+            path = d3.geo.path()
+              .projection(proj);
+
+        worldcountries.data(features)
+          .transition()
+            .duration(750)
+            .ease("linear")
+            .attr("fill", "#fafafa")
+            .attr("d", path);
+
+        worldcountries.select("title")
+          .text(function(d) {
+            try{
+            return d.properties['FULLNAME'];
+      }catch(e){
+    return "no data";
+      }
+          });
+          
+      }
+
+      function update() {
+        var start = Date.now();
+        body.classed("updating", true);
+
+        var key = field.key.replace("%d", year),
+            fmt = (typeof field.format === "function")
+              ? field.format
+              : d3.format(field.format || ","),
+            value = function(d) {
+              try {
+              return +d.properties[key];
+        }catch(e) {return 0;}
+            },
+            values = worldcountries.data()
+              .map(value)
+              .filter(function(n) {
+                return !isNaN(n);
+              })
+              .sort(d3.ascending),
+            lo = values[0],
+            hi = values[values.length - 1];
+
+        var color = d3.scale.linear()
+          .range(colors)
+          .domain(lo < 0
+            ? [lo, 0, hi]
+            : [lo, d3.mean(values), hi]);
+
+        // normalize the scale to positive numbers
+        var scale = d3.scale.linear()
+          .domain([lo, hi])
+          .range([10, 1000]);
+
+        // tell the cartogram to use the scaled values
+        carto.value(function(d) {
+          return scale(value(d));
+        });
+
+        // generate the new features, pre-projected
+        var features = carto(topology, geometries).features;
+
+        // update the data
+        worldcountries.data(features)
+          .select("title")
+            .text(function(d) {
+              try{
+              return [d.properties.FULLNAME, value(d)].join(" : ") + field.unit;
+              }catch(e){return "no data";}
+            });
+
+        worldcountries.transition()
+          .duration(2750)
+          .ease("linear")
+          .attr("fill", function(d) {
+            return color(value(d));
+          })
+          .attr("d", carto.path);
+
+        var delta = (Date.now() - start) / 1000;
+        stat.text(["calculated in", delta.toFixed(1), "seconds"].join(" "));
+        body.classed("updating", false);
+      }
+
+      var deferredUpdate = (function() {
+        var timeout;
+        return function() {
+          var args = arguments;
+          clearTimeout(timeout);
+          stat.text("calculating...");
+          return timeout = setTimeout(function() {
+            update.apply(null, arguments);
+          }, 10);
+        };
+      })();
+
+      var hashish = d3.selectAll("a.hashish")
+        .datum(function() {
+          return this.href;
+        });
+
+      function parseHash() {
+        var parts = location.hash.substr(1).split("/"),
+            desiredFieldId = parts[0],
+            desiredYear = +parts[1];
+
+        field = fieldsById[desiredFieldId] || fields[0];
+        year = (years.indexOf(desiredYear) > -1) ? desiredYear : years[0];
+
+        fieldSelect.property("selectedIndex", fields.indexOf(field));
+
+        if (field.id === "none") {
+
+          yearSelect.attr("disabled", "disabled");
+          reset();
+
+        } else {
+
+          if (field.years) {
+            if (field.years.indexOf(year) === -1) {
+              year = field.years[0];
+            }
+            yearSelect.selectAll("option")
+              .attr("disabled", function(y) {
+                return (field.years.indexOf(y) === -1) ? "disabled" : null;
+              });
+          } else {
+            yearSelect.selectAll("option")
+              .attr("disabled", null);
+          }
+
+          yearSelect
+            .property("selectedIndex", years.indexOf(year))
+            .attr("disabled", null);
+
+          deferredUpdate();
+          location.replace("#" + [field.id, year].join("/"));
+
+          hashish.attr("href", function(href) {
+            return href + location.hash;
+          });
+        }
+      }
+
+    </script>
+  </body>
+</html>

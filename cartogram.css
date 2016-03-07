@@ -11,6 +11,8 @@ body {
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
+.masthead-brand,
+.masthead-nav,
 .marketing,
 .footer {
   padding-right: 15px;
@@ -40,6 +42,7 @@ body {
 /* Customize container */
 @media (min-width: 768px) {
   .container {
+    margin-top: 100px;
     max-width: 1000px;
   }
 }
@@ -47,10 +50,51 @@ body {
   margin: 30px 0;
 }
 
-.nav a {
-  background-color: #F5F5F5;
-  opacity: 0.7;
-  color: #000000; 
+.masthead-brand {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.masthead-nav {
+  margin top: 0px;
+}
+
+.masthead-nav > li {
+  display: inline-block;
+}
+.masthead-nav > li + li {
+  margin-left: 20px;
+}
+.masthead-nav > li > a {
+  padding-right: 0;
+  padding-left: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff; /* IE8 proofing */
+  color: rgba(255,255,255,.75);
+  border-bottom: 2px solid transparent;
+}
+.masthead-nav > li > a:hover,
+.masthead-nav > li > a:focus {
+  background-color: transparent;
+  color: #fff;
+  border-bottom-color: #fff
+}
+
+.masthead-nav > .active > a:hover,
+.masthead-nav > .active > a:focus {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+@media (min-width: 768px) {
+  .masthead-brand {
+    float: left;
+  }
+  .masthead-nav {
+    float: right;
+  }
 }
 
 /* Main marketing message and sign up button */
@@ -95,7 +139,7 @@ body {
   }
   /* Space out the masthead */
   .header {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   }
   /* Remove the bottom border on the jumbotron for visual effect */
   .jumbotron {
