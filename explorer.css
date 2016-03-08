@@ -33,10 +33,6 @@ body {
       -o-background-size: cover;
       background-size: cover;
 }
-body {
-  color: #333;
-  text-align: center;
-}
 
 /* Extra markup and styles for table-esque vertical and horizontal centering */
 .site-wrapper {
@@ -58,7 +54,7 @@ body {
 
 /* Padding for spacing */
 .inner {
-  padding: 80px;
+  padding: 30px;
 }
 
 
@@ -66,13 +62,9 @@ body {
  * Header
  */
 .masthead-brand {
-  margin-top: 0px;
+  margin-top: 10px;
   margin-bottom: 10px;
   color: #fff;
-}
-
-.masthead-nav {
-  margin top: 0px;
 }
 
 .masthead-nav > li {
@@ -124,6 +116,13 @@ body {
   padding: 10px 20px;
   font-weight: bold;
 }
+
+.container {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: white;
+}
+
 
 
 /*

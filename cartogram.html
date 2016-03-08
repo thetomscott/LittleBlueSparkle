@@ -18,10 +18,7 @@
         margin: 0;
       }
 
-      #container {
-        width: 1000px;
-        margin: 20px auto;
-      }
+     
 
       h1 {
         font-size: 200%;
@@ -111,43 +108,54 @@
   </head>
 
   <body>
+    <div class="site-wrapper">
 
-    
-      <div class="inner">
-              <h3 class="masthead-brand">Little Blue Sparkle</h3>
-              <nav>
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+            <div class="masthead clearfix">
+              <div class="inner">
+                <h3 class="masthead-brand">Little Blue Sparkle</h3>
+                <nav>
                 <ul class="nav masthead-nav">
                   <li class="active"><a href="index.html">Home</a></li>
                   <li><a href="explorer.html">Explorer</a></li>
                 </ul>
-              </nav>
+                </nav>
+              </div>
             </div>
 
-    <div class="container">
+            <div class="container">
 
-      <div class="jumbotron">
-      <h1>Worldwide Cartogram</h1>
-      <p>This map can be contorted to change the shape and size of each country depending on the proportion it takes of a given variable for a particular year.</p> 
-        <form>
-        <p>
-          <label>Scale by <select id="field"></select></label>
-          <label>in <select id="year"></select></label>
-          <span id="status"></span><br>
-        </p>
-      </form>
-      <div id="map-container">
-        <img id="placeholder" alt="placeholder image for old browsers" src="placeholder.png">
-        <svg id="map"></svg>
+              <div class="jumbotron">
+                <h1>Worldwide Cartogram</h1>
+                <p>This map can be contorted to change the shape and size of each country depending on the proportion it takes of a given variable for a particular year.</p> 
+                <form>
+                  <p>
+                    <label>Scale by <select id="field"></select></label>
+                    <label>in <select id="year"></select></label>
+                    <span id="status"></span><br>
+                  </p>
+                </form>
+                <div id="map-container">
+                  <img id="placeholder" alt="placeholder image for old browsers" src="placeholder.png">
+                  <svg id="map"></svg>
+                </div>
+                <p>This cartogram applies code from <a href="http://th-mayer.de/cartogram/">Thomas Mayer</a> and 
+                <a href="http://prag.ma/code/d3-cartogram/" target="_blank">Shawn Allen</a>, author of 
+                <a href="https://github.com/shawnbot/d3-cartogram/" target="_blank">cartogram.js</a>, a d3 implementation of an <a href="http://onlinelibrary.wiley.com/doi/10.1111/j.0033-0124.1985.00075.x/abstract" target="_blank">algorithm</a> to construct continuous area cartograms. It also uses <a href="http://github.com/mbostock/topojson" target="_blank">topojson</a>, 
+                <a href="http://www.geonames.org" target="_blank">geonames</a>, <a href="http://d3js.org">d3</a>, <a href="http://naturalearthdata.com">natural earth</a>, <a href="http://colorbrewer2.org" target="_blank">colorbrewer</a> and UN Data.</p>    
+              </div>
+
+              <div class="footer">
+                <p><a href="http://github.com/thetomscott/LittleBlueSparkle"</a>GitHub</p>
+              </div>    
+
+            </div> 
+        </div> 
       </div>
-      <p>This cartogram applies code from <a href="http://th-mayer.de/cartogram/">Thomas Mayer</a> and 
-        <a href="http://prag.ma/code/d3-cartogram/" target="_blank">Shawn Allen</a>, author of 
-        <a href="https://github.com/shawnbot/d3-cartogram/" target="_blank">cartogram.js</a>, a d3 implementation of an <a href="http://onlinelibrary.wiley.com/doi/10.1111/j.0033-0124.1985.00075.x/abstract" target="_blank">algorithm</a> to construct continuous area cartograms. It also uses <a href="http://github.com/mbostock/topojson" target="_blank">topojson</a>, 
-        <a href="http://www.geonames.org" target="_blank">geonames</a>, <a href="http://d3js.org">d3</a>, <a href="http://naturalearthdata.com">natural earth</a>, <a href="http://colorbrewer2.org" target="_blank">colorbrewer</a> and UN Data.</p>    
-    </div>
-
-    <div class="footer">
-      <p><a href="http://github.com/thetomscott/LittleBlueSparkle"</a>GitHub</p>
-    </div>       
+    </div> 
 
 
     <!-- /container -->
